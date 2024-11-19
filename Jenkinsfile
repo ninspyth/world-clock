@@ -27,7 +27,9 @@ pipeline {
         stage('Copy Files to Host') {
             steps {
                 script {
-                    sh 'docker cp cf84570c4faa:/var/jenkins_home/nextjs-app/* /var/www/nextjs-app/'
+                    docker.image('your-jenkins-image').inside {
+                        sh 'cp -r /var/jenkins_home/nextjs-app/* /var/www/nextjs-app/'
+                    }
                 }
             }
         }
