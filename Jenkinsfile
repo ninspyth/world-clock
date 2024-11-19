@@ -27,7 +27,7 @@ pipeline {
         stage('Copy Files to Host') {
             steps {
                 script {
-                    sh 'docker cp $(docker ps -q --filter "name=jenkins"):/var/jenkins_home/nextjs-app/* /var/www/nextjs-app/'
+                    sh 'docker cp cf84570c4faa:/var/jenkins_home/nextjs-app/* /var/www/nextjs-app/'
                 }
             }
         }
