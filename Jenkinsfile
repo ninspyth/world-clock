@@ -1,19 +1,22 @@
 pipeline {
     agent any
     tools {
-        nodejs "NodeJS 18"
+        nodejs "world-clock"
     }
     stages {
-        stage('Build') {
+        stage('Checkout') {
             steps {
-                sh 'npm clean-install'
-                sh 'npm run build'
-                sh 'npm run export'
+                checkout scm
             }
         }
-        stage('Local Deploy') {
+        stage('Install Dependencies') {
             steps {
-                sh 'cp -r ./out/* /var/www/nextjs-app'
+                sh 'npm clean-install'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'npm run build'
             }
         }
     }
