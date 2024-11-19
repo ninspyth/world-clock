@@ -19,5 +19,10 @@ pipeline {
                 sh 'npm run build'
             }
         }
+        stage('Local Deploy') {
+            steps {
+                sh 'cp -r ./out/* /var/www/html/nextjs-app'
+            }
+        }
     }
 }
