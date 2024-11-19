@@ -21,7 +21,7 @@ pipeline {
         }
         stage('Local Deploy') {
             steps {
-                sh 'cp -r ./out/* /var/www/nextjs-app/' 
+                sh 'cp -r ./out/* /var/jenkins_home/nextjs-app/' 
             }
         }
     }
