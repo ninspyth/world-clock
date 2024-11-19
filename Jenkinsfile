@@ -1,64 +1,64 @@
-
 pipeline {
     agent any
 
-    tools {
-        nodejs "NodeJS 18" // Matches the name configured in NodeJS plugin
-    }
-
     environment {
-        BUILD_DIR = "out" // Output directory for the build
+        NODE_HOME = tool name: 'NodeJS 18.0.0', type: 'NodeJS' // Ensure this matches the name in the Global Tool Configuration
+        NPM_CONFIG_PREFIX = "${WORKSPACE}/.npm"
     }
 
     stages {
         stage('Checkout') {
             steps {
+                // Checkout the latest code from the repository
                 checkout scm
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                sh 'npm install'
+                script {
+                    // Install dependencies using npm
+                    sh 'npm install'
+                }
             }
         }
 
-        stage('Build Project') {
+        stage('Build Next.js') {
             steps {
-                sh 'npm run build'
+                script {
+                    // Build the Next.js app
+                    sh 'npm run build'
+                }
             }
         }
 
-        stage('Run Tests') {
+        stage('Export Static Files') {
             steps {
-                sh 'npm test' // Ensure your project has tests configured
+                script {
+                    // Export static files to the 'out' folder
+                    sh 'npm run export'
+                }
             }
         }
 
         stage('Deploy') {
             steps {
-                sh '''
-                if [ -d "$BUILD_DIR" ]; then
-                  echo "Deploying build to /var/www/nextjs-app"
-                  sudo cp -r $BUILD_DIR/* /var/www/nextjs-app/
-                else
-                  echo "Build directory not found!"
-                  exit 1
-                fi
-                '''
+                script {
+                    // Deploy the app to the server using SCP or SSH (if configured)
+                    sh """
+                        scp -r ./out/* username@your-server:/var/www/nextjs-app/out
+                    """
+                }
             }
         }
     }
 
     post {
-        always {
-            echo "Pipeline completed"
-        }
         success {
-            echo "Build and Deployment successful!"
+            echo 'Build and Deployment Success!'
         }
         failure {
-            echo "Pipeline failed!"
+            echo 'Build or Deployment Failed!'
         }
     }
 }
