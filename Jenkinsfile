@@ -1,64 +1,20 @@
 pipeline {
     agent any
-
-    environment {
-        NODE_HOME = tool name: 'NodeJS 18', type: 'NodeJS' // Ensure this matches the name in the Global Tool Configuration
-        NPM_CONFIG_PREFIX = "${WORKSPACE}/.npm"
+    tools {
+        nodejs "NodeJS 18"
     }
-
     stages {
-        stage('Checkout') {
+        stage('Build') {
             steps {
-                // Checkout the latest code from the repository
-                checkout scm
+                sh 'npm clean-install'
+                sh 'npm run build'
+                sh 'npm run export'
             }
         }
-
-        stage('Install Dependencies') {
+        stage('Local Deploy') {
             steps {
-                script {
-                    // Install dependencies using npm
-                    sh 'npm install'
-                }
+                sh 'cp -r ./out/* /var/www/html/nextjs-app'
             }
-        }
-
-        stage('Build Next.js') {
-            steps {
-                script {
-                    // Build the Next.js app
-                    sh 'npm run build'
-                }
-            }
-        }
-
-        stage('Export Static Files') {
-            steps {
-                script {
-                    // Export static files to the 'out' folder
-                    sh 'npm run export'
-                }
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                script {
-                    // Deploy the app to the server using SCP or SSH (if configured)
-                    sh """
-                        scp -r ./out/* username@your-server:/var/www/nextjs-app/out
-                    """
-                }
-            }
-        }
-    }
-
-    post {
-        success {
-            echo 'Build and Deployment Success!'
-        }
-        failure {
-            echo 'Build or Deployment Failed!'
         }
     }
 }
