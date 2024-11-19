@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        NODE_HOME = tool name: 'NodeJS 18.0.0', type: 'NodeJS' // Ensure this matches the name in the Global Tool Configuration
+        NODE_HOME = tool name: 'NodeJS 18', type: 'NodeJS' // Ensure this matches the name in the Global Tool Configuration
         NPM_CONFIG_PREFIX = "${WORKSPACE}/.npm"
     }
 
